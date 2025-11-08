@@ -10,6 +10,7 @@ function App() {
   }, []);
 
   const fetchBranches = async () => {
+    // const API_BASE = "https://kamala-backend.onrender.com";
     const res = await axios.get('http://localhost:5000/api/branches');
     setBranches(res.data);
   };
