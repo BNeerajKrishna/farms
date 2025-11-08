@@ -1,38 +1,40 @@
-name: SSH Test to EC2 Instance
+name: SSH into EC2
 
 on:
   workflow_dispatch:
+    inputs:
+      host_ip:
+        description: 'Public IP of the EC2 instance'
+        required: true
+      ssh_user:
+        description: 'SSH username'
+        required: true
+        default: ubuntu
 
 jobs:
-  ssh-test:
+  ssh:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Download instance IP artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: instance-ip
-          path: .
-
-      - name: Read instance IP
-        id: read-ip
-        run: |
-          IP=$(cat instance_ip.txt)
-          echo "instance_ip=$IP" >> $GITHUB_ENV
-          echo "Instance IP: $IP"
-
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: SSH and run test commands
-        uses: appleboy/ssh-action@v0.1.10
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.7.1
         with:
-          host: ${{ env.instance_ip }}
-          username: ubuntu
+          ssh-private-key: ${{ secrets.EC2_PRIVATE_KEY }}
+
+      - name: SSH and run commands
+        uses: appleboy/ssh-action@v0.1.32
+        with:
+          host: ${{ github.event.inputs.host_ip }}
+          username: ${{ github.event.inputs.ssh_user }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
             sudo apt update -y
-            cd /home/ubuntu
-            ls
+            echo "Hello World from GitHub Actions"
+            # Example: clone repo if not exists
+            cd /home/${{ github.event.inputs.ssh_user }}
             [ ! -d farms ] && git clone https://github.com/BNeerajKrishna/farms.git
             cd farms/frontend
             ls
