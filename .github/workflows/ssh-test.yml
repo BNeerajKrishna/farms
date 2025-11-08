@@ -32,6 +32,8 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
             sudo apt update -y
+            # install git
+            sudo apt install git -y
             echo "Hello World from GitHub Actions"
             # Example: clone repo if not exists
             cd /home/${{ github.event.inputs.ssh_user }}
