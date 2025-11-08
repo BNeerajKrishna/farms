@@ -23,6 +23,16 @@ jobs:
         uses: webfactory/ssh-agent@v0.9.1
         with:
           ssh-private-key: ${{ secrets.EC2_PRIVATE_KEY }}
+      
+      - name: Check directory
+        run: ls -la
+
+        # add github actions step to cd in to scrpts directoryand run sample.sh script
+      - name: Run sample.sh script
+        run: |
+          cd scripts
+          chmod +x sample.sh
+          ./sample.sh
 
       - name: SSH and run commands
         uses: appleboy/ssh-action@v1.2.3
