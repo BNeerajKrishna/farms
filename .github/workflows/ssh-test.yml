@@ -1,0 +1,40 @@
+name: SSH Test to EC2 Instance
+
+on:
+  workflow_dispatch:
+
+jobs:
+  ssh-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download instance IP artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: instance-ip
+          path: .
+
+      - name: Read instance IP
+        id: read-ip
+        run: |
+          IP=$(cat instance_ip.txt)
+          echo "instance_ip=$IP" >> $GITHUB_ENV
+          echo "Instance IP: $IP"
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: SSH and run test commands
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ env.instance_ip }}
+          username: ubuntu
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script: |
+            sudo apt update -y
+            cd /home/ubuntu
+            ls
+            [ ! -d farms ] && git clone https://github.com/BNeerajKrishna/farms.git
+            cd farms/frontend
+            ls
+            cd ../backend
+            ls
