@@ -4,9 +4,6 @@ on:
   workflow_dispatch:  # manually triggered
 
 jobs:
-  # ------------------------------------------------------------
-  # 1️⃣ Terraform Destroy Plan
-  # ------------------------------------------------------------
   terraform-destroy-plan:
     name: Terraform Destroy Plan
     runs-on: ubuntu-latest
@@ -21,6 +18,10 @@ jobs:
       - name: Terraform Init
         working-directory: ./terraform
         run: terraform init
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-south-1
 
       - name: Terraform Destroy Plan
         working-directory: ./terraform
@@ -59,6 +60,10 @@ jobs:
       - name: Terraform Init
         working-directory: ./terraform
         run: terraform init
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-south-1
 
       - name: Terraform Apply Destroy Plan
         working-directory: ./terraform
