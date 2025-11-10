@@ -6,12 +6,12 @@ terraform {
     }
   }
 
-  required_version = ">= 1.3.0"
+    required_version = ">= 1.3.0"
     backend "s3" {
         bucket         = "kf-test-tf-state-bucket"
         key            = "state/terraform.tfstate"
         region         = "ap-south-1"
-        # dynamodb_table = "terraform-locks"            # optional but recommended for state locking
+        use_lockfile   = true
         encrypt        = true
     }
 }
